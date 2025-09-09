@@ -321,12 +321,9 @@
 
       document.getElementById('orderForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        const drink = document.getElementById('drink').value;
-        const ice = document.getElementById('ice').value;
-        const sweet = document.getElementById('sweet').value;
 
-        if (drink === '' || ice === '' || sweet === '') {
-          showPopup("請完整選擇\n飲品、冰塊與甜度");
+        if (cartItems.length === 0) {
+          showPopup("尚未選擇飲品");
           return;
         }
 
@@ -341,7 +338,7 @@
         const sweet = document.getElementById('sweet').value;
 
         if (drink === '' || ice === '' || sweet === '') {
-          showPopup("請完整選擇\n飲品、冰塊與甜度");
+          showPopup("請完整選擇\n飲品、冰塊、甜度");
           return;
         }
 

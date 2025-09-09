@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cloud Coffee</title>
+  <style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f2f2f2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        background: url(OY_coffee.jpg) no-repeat center center/cover;
+    }
+
+    #home-icon {
+        position: absolute;
+        top: 20px;
+        left: 30px;
+        width: 50px;
+        height: 50px;
+        background-color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        text-decoration: none;
+        z-index: 1000;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        transition: 0.3s;
+    }
+    #home-icon:hover {
+        background-color: #eee;
+        transform: scale(1.5);
+    }
+
+    .wrapper{
+        margin: 0;
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        min-height: 95vh;
+        gap: 20px;
+    }
+    
+    .container, .cart-container{
+        width: 525px;
+        height: 600px;
+        background-color: hsla(0, 0%, 100%, 0.900);
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .header{     
+        flex: 0 0 auto;
+        text-align: center;
+        padding: 20px;
+    }
+    .header h2{
+        margin: 0;
+        color: #333;
+        font-size: 30px;
+    }
+
+    .container form {
+        flex: 1 1 auto;
+        padding: 25px;               /* 左白框內距 */
+        display: flex;
+        flex-direction: column;      /* 讓 add-btn 能被推到底 */
+    }
+
+    .cart {
+        flex: 1 1 auto;
+        overflow-y: auto;
+        padding: 20px;
+        font-size: 20px;
+    }
+
+    .cart-footer{
+        flex: 0 0 auto;
+        padding: 25px;               /* 和左側 form 的 padding 對齊 */
+    }
+
+    .cart ul {
+        padding-left: 0;
+        list-style: none;
+    }
+    .cart li {
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    /* 刪除鍵 */
+    .item-left{
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+    }
+    .item-name{
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 330px;
+    }
+    .remove-btn{
+        cursor: pointer;
+        border: none;
+        background: transparent;
+        font-size: 20px;
+        line-height: 1;
+        color: #999;
+        padding: 0 2px;
+    }
+    .remove-btn:hover{
+        color: #d83a3a;
+    }
+
+    label {
+        display: block;
+        margin-top: 15px;
+        color: #555;
+    }
+
+    select{
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 20px;
+    }
+    
+    .add-btn,
+    .sent-btn{
+        width: 100%;
+        height: 60px;
+        padding: 10px;               /* 確保兩邊按鈕視覺一致 */
+        text-align: center;
+        background-color: #5b5b5b;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 20px;
+        cursor: pointer;
+        transition: .5s;
+        display: block;
+    }
+    .add-btn{  margin-top: auto; }
+    .add-btn:hover,
+    .sent-btn:hover{
+        background-color: #bff000;
+        color: #555;
+    }
+
+    /* 數量控制 */
+    .quantity-control {
+        display: flex;
+        align-items: center;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        overflow: hidden;
+        background-color: white;
+        height: 36px;
+        margin-left: 10px;
+        flex: 0 0 auto;
+    }
+    .quantity-control button {
+        width: 40px;
+        height: 100%;
+        font-size: 24px;
+        margin: 0;
+        background-color: #ffffff;
+        color: #555;
+        border: none;
+        border-right: 1px solid #ccc;
+        border-left: 1px solid #ccc;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .quantity-control button:first-child { border-left: none; }
+    .quantity-control button:last-child  { border-right: none; }
+    .quantity-control input {
+        width: 40px;
+        height: 100%;
+        text-align: center;
+        border: none;
+        font-size: 16px;
+        pointer-events: none;
+    }
+
+    /* popup */
+    .popup {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 500px;
+        height: 300px;
+        border-radius: 12px;
+        padding: 20px;
+        color: white;
+        text-align: center;
+        font-size: 18px;
+        justify-content: center;
+        align-items: center;
+    }
+    .popup-content {
+        background-color: hsla(185, 95%, 51%, 0.892);
+        width: 400px;
+        height: 250px;
+        font-size: 30px;
+        color: #ffffff;
+        border-radius: 10px;
+        padding: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+    }
+    .popup.show { display: flex; }
+  </style>
+</head>
+<body>
+  <a href="主頁.html" id="home-icon" title="回首頁">🏠</a>
+  <div class="wrapper">  
+    
+    <!-- 左邊 container -->
+    <div class="container">
+      <div class="header">
+        <h2>自己動手點</h2>
+      </div>
+      <form id="orderForm">
+        <label for="drink">選擇飲品：</label>
+        <select id="drink" name="drink">
+          <option value="">-- 請選擇 --</option>
+          <option>美式咖啡</option>
+          <option>拿鐵</option>
+          <option>焦糖瑪奇朵</option>
+          <option>卡布奇諾</option>
+          <option>摩卡咖啡</option>
+          <option>榛果拿鐵</option>
+          <option>西西里檸檬咖啡</option>
+          <option>伯爵奶茶</option>
+          <option>抹茶拿鐵</option>
+          <option>白桃烏龍茶</option>
+          <option>桂花綠茶</option>
+          <option>百香果綠茶</option>
+          <option>洛神花茶</option>
+          <option>熱柚子茶</option>
+          <option>薰衣草奶茶</option>
+          <option>冷萃咖啡</option>
+          <option>蜂蜜檸檬水</option>
+          <option>草莓氣泡飲</option>
+          <option>可爾必思氣泡飲</option>
+          <option>藍莓優格冰沙</option>
+          <option>黑糖鮮奶</option>
+          <option>黑糖薑茶</option>
+          <option>熱可可</option>
+          <option>柳橙汁</option>
+        </select>
+
+        <label for="ice">冰塊：</label>
+        <select id="ice" name="ice">
+          <option value="">-- 請選擇 --</option>
+          <option>正常冰</option>
+          <option>少冰</option>
+          <option>去冰</option>
+          <option>常溫</option>
+          <option>熱飲</option>
+        </select>
+
+        <label for="sweet">甜度：</label>
+        <select id="sweet" name="sweet">
+          <option value="">-- 請選擇 --</option>
+          <option>全糖</option>
+          <option>七分糖</option>
+          <option>半糖</option>
+          <option>三分糖</option>
+          <option>無糖</option>
+        </select>
+
+        <button type="button" id="addToCart" class="add-btn">加入購物車</button>
+      </form>
+    </div>
+
+    <!-- 右邊 cart -->
+    <div class="cart-container">
+      <div class="header">
+        <h2>購物車內容：</h2>
+      </div>
+      <div class="cart" id="cart">
+        <ul id="cartList"></ul>
+      </div>
+      <div class="cart-footer">
+        <button type="submit" form="orderForm" class="sent-btn">送出訂單</button>
+      </div>
+    </div>
+
+    <!-- popup -->
+    <div id="popup" class="popup">
+      <div class="popup-content" id="popupContent"></div>
+    </div>
+
+    <script>
+      const cartItems = [];
+
+      document.getElementById('orderForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const drink = document.getElementById('drink').value;
+        const ice = document.getElementById('ice').value;
+        const sweet = document.getElementById('sweet').value;
+
+        if (drink === '' || ice === '' || sweet === '') {
+          showPopup("請完整選擇\n飲品、冰塊與甜度");
+          return;
+        }
+
+        showPopup("訂單已送出");
+        cartItems.length = 0;
+        updateCart();
+      });
+
+      document.getElementById('addToCart').addEventListener('click', function() {
+        const drink = document.getElementById('drink').value;
+        const ice = document.getElementById('ice').value;
+        const sweet = document.getElementById('sweet').value;
+
+        if (drink === '' || ice === '' || sweet === '') {
+          showPopup("請完整選擇\n飲品、冰塊與甜度");
+          return;
+        }
+
+        const order = { text: `${drink}／${ice}／${sweet}`, quantity: 1 };
+        cartItems.push(order);
+        updateCart();
+        showPopup(`成功加入購物車`);
+      });
+
+      function updateCart() {
+        const cart = document.getElementById('cart');
+        const cartList = document.getElementById('cartList');
+        cartList.innerHTML = '';
+
+        cartItems.forEach((item, index) => {
+          const li = document.createElement('li');
+          li.innerHTML = `
+            <span class="item-left">
+              <button class="remove-btn" title="刪除" onclick="removeItem(${index})">×</button>
+              <span class="item-name">${index + 1}. ${item.text}</span>
+            </span>
+            <div class="quantity-control">
+              <button onclick="decreaseQuantity(${index})">-</button>
+              <input type="text" value="${item.quantity}" readonly />
+              <button onclick="increaseQuantity(${index})">+</button>
+            </div>
+          `;
+          cartList.appendChild(li);
+        });
+        cart.style.display = 'block';
+      }
+
+      function increaseQuantity(index) {
+        cartItems[index].quantity++;
+        updateCart();
+      }
+
+      function decreaseQuantity(index) {
+        if (cartItems[index].quantity > 1) {
+          cartItems[index].quantity--;
+        }
+        updateCart();
+      }
+
+      function removeItem(index){
+        cartItems.splice(index, 1);
+        updateCart();
+      }
+
+      function showPopup(message) {
+        const popup = document.getElementById("popup");
+        const popupContent = document.getElementById("popupContent");
+        popupContent.innerText = message;
+        popup.classList.add("show");
+        setTimeout(() => {
+          popup.classList.remove("show");
+        }, 2000);
+      }
+    </script>
+  </div>
+</body>
+</html>

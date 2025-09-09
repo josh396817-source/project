@@ -1,0 +1,1873 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}"
+    />
+    <title>Cloud Coffee</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        font-family: Arial, Helvetica, sans-serif;
+        align-items: center;
+        height: 100vh;
+        background: url(WC_coffee.jpg) no-repeat center center/cover;
+      }
+      /* ＝＝＝＝＝＝＝＝⬇⬇icon及視窗功能⬇⬇＝＝＝＝＝＝＝＝ */
+      #home-icon {
+        position: absolute;
+        top: 20px;
+        left: 30px;
+        width: 50px;
+        height: 50px;
+        background-color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        text-decoration: none;
+        z-index: 1000;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        transition: 0.3s;
+      }
+
+      #home-icon:hover {
+        background-color: #eee;
+        transform: scale(1.5);
+      }
+
+      #cart-icon {
+        position: fixed;
+        top: 20px;
+        right: 30px;
+        width: 60px;
+        height: 60px;
+        background-color: white;
+        color: black;
+        font-size: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.3s;
+        z-index: 1000;
+      }
+
+      #cart-icon:hover {
+        background-color: #eee;
+        transform: scale(1.2);
+      }
+
+      #cart-modal {
+        display: none;
+        position: fixed;
+        top: 100px;
+        right: 50px;
+        background: white;
+        width: 300px;
+        border: 2px solid #333;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: opacity 0.4s ease, transform 0.4s ease;
+        z-index: 999;
+      }
+
+      #cart-modal.show {
+        display: block;
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      #cart-modal h3 {
+        margin-top: 0;
+      }
+
+      #cart-items {
+        padding-left: 20px;
+      }
+
+      #submit-order {
+        margin-top: 15px;
+        width: 100%;
+        padding: 10px;
+        background-color: #1e90ff;
+        color: white;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      #submit-order:hover {
+        background-color: #0d70d0;
+      }
+
+      /* ＝＝＝＝＝＝＝＝⬆⬆icon⬆⬆＝＝＝＝＝＝＝＝ */
+
+      /* ＝＝＝＝＝＝＝＝⬇⬇視窗功能⬇⬇＝＝＝＝＝＝＝＝ */
+
+      .drink-box {
+        width: 565px;
+        background-color: white;
+        color: black;
+        padding: 10px;
+        border-radius: 10px;
+        margin: 10px;
+        height: 60px;
+        font-size: 25px;
+        text-align: center;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      .drink-box:hover {
+        background-color: #0af3fbb8;
+        color: #fff;
+        font-size: 30px;
+        /* box-shadow: 0 0 8px rgba(0, 0, 0, 0.1); */
+      }
+
+      /* 甜度選擇視窗 */
+      #sweetness-modal {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        width: 300px;
+        transform: translate(-50%, -50%);
+        background-color: rgb(255, 255, 255);
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+        z-index: 2000;
+      }
+
+      #sweetness-modal.show {
+        display: inline-block;
+      }
+
+      #sweetness-modal h4 {
+        margin-top: 0;
+      }
+
+      #sweetness-modal select {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+      }
+
+      #confirm-sweetness {
+        margin-top: 15px;
+        width: 100%;
+        padding: 10px;
+        background-color: #00b7cb;
+        color: white;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      #confirm-sweetness:hover {
+        background-color: hsla(185, 95%, 51%, 0.892);
+      }
+
+      .close-button {
+        color: #aaa;
+        font-size: 28px;
+        font-weight: bold;
+        position: absolute;
+        right: 16px;
+        top: 10px;
+        cursor: pointer;
+      }
+
+      .close-button:hover {
+        color: rgb(0, 0, 0);
+      }
+
+      /* ＝＝＝＝＝＝＝＝⬆⬆視窗功能⬆⬆＝＝＝＝＝＝＝＝ */
+
+      .wrap1 {
+        margin-top: 50px;
+      }
+      .box1 {
+        width: 250px;
+        height: 25px;
+        background-color: rgba(255, 255, 255, 0.8);
+        text-align: center;
+        border-top-right-radius: 20px;
+        border-top-left-radius: 20px;
+      }
+      .box1 label {
+        margin: auto;
+        padding: auto;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 20px;
+      }
+      .box2 {
+        width: 250px;
+        height: 50px;
+        background-color: rgba(56, 255, 255, 0.8);
+        text-align: center;
+        border-bottom-right-radius: 20px;
+        border-bottom-left-radius: 20px;
+      }
+      select {
+        width: 250px;
+        height: 50px;
+        text-align: center;
+        font-size: 30px;
+        font-family: Arial, Helvetica, sans-serif;
+        font-style: italic;
+        font-weight: bold;
+        color: rgb(0, 0, 0);
+        background-color: transparent;
+        border: none;
+      }
+
+      .wrap2 {
+        margin-top: 50px;
+        width: 1300px;
+        height: 400px;
+        display: flex;
+        border-radius: 20px;
+      }
+
+      .box3 {
+        width: 650px;
+        height: 390px;
+        background-color: rgba(76, 94, 104, 0.95);
+        padding: 30px;
+        color: white;
+        font-size: 30px;
+      }
+
+      .wraper {
+        width: 50%;
+        height: 450px;
+        /* flex-direction: row; */
+        background-color: rgba(139, 169, 186, 0.9);
+      }
+
+      #box5 #weather {
+        width: 650px;
+        height: 45px;
+        /* background-color: rgba(0, 162, 255, 0.8); */
+        color: white;
+        font-size: 40px;
+        text-align: center;
+      }
+
+      #box6 {
+        margin-top: 10px;
+        padding: 20px;
+        height: 300px;
+        color: white;
+        text-align: center;
+      }
+
+      .popup {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 500px;
+        height: 200px;
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        font-size: 18px;
+        justify-content: center;
+        align-items: center;
+      }
+      .popup-content {
+        background-color: hsl(185, 95%, 51%);
+        width: 400px;
+        height: 250px;
+        font-size: 30px;
+        color: #fff;
+        border-radius: 10px;
+        padding: 30px;
+        font-family: Arial, Helvetica, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+      }
+      .popup.show {
+        display: flex;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ＝＝＝＝＝＝＝＝周圍介面＝＝＝＝＝＝＝＝ -->
+    <a href="主頁.html" id="home-icon" title="回首頁">🏠</a>
+
+    <!-- 購物車 icon -->
+    <div id="cart-icon">🛒</div>
+
+    <!-- 購物車視窗 -->
+    <div id="cart-modal">
+      <h3>購物車內容</h3>
+      <ul id="cart-items"></ul>
+      <button id="submit-order">送出訂單</button>
+    </div>
+
+    <!-- 甜度選擇彈窗 -->
+    <div id="sweetness-modal">
+      <span class="close-button" id="closeBtn">&times;</span>
+      <h4>請選擇甜度</h4>
+      <select id="sweetness">
+        <option value="無糖">無糖</option>
+        <option value="微糖">微糖</option>
+        <option value="半糖">半糖</option>
+        <option value="全糖">全糖</option>
+      </select>
+      <button id="confirm-sweetness">送出</button>
+    </div>
+
+    <!-- ＝＝＝＝＝＝＝＝主要畫面＝＝＝＝＝＝＝＝ -->
+    <div class="wrap1">
+      <div class="box1">
+        <label for="mood">您今天心情如何?</label>
+      </div>
+      <div class="box2">
+        <select id="mood">
+          <option value="">--請選擇--</option>
+          <option value="amazing">開心</option>
+          <option value="sad">感覺有點難過</option>
+          <option value="calm">心情平靜</option>
+          <option value="tired">感覺又點累</option>
+          <option value="notsogood">心情不太好</option>
+          <option value="itsabadday">今天很不好</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="wrap2">
+      <div class="box3" id="moodResponse"></div>
+      <div class="wraper">
+        <div id="box5">
+          <p id="weather">正在取得天氣資訊</p>
+        </div>
+        <div id="box6"></div>
+      </div>
+    </div>
+    <div id="popup" class="popup">
+      <div class="popup-content" id="popupContent"></div>
+    </div>
+
+    <script>
+      //////////////////////心靈小語//////////////////////
+
+      const moodWeatherTemperatureReplies = [
+        // amazing
+        {
+          mood: "amazing",
+          weather: "晴天",
+          temperature: "0~8°C",
+          reply:
+            "天氣晴朗且氣溫偏涼，您懷抱愉悅心情，感受到內心的平和與力量。這是放慢腳步，細細品味生活美好的時刻，讓身心都充滿活力與希望。",
+        },
+        {
+          mood: "amazing",
+          weather: "晴天",
+          temperature: "9~16°C",
+          reply:
+            "晴朗的天空映照著您歡欣的情緒，即使微冷的空氣也無法阻擋您面對生活的熱情與信念。",
+        },
+        {
+          mood: "amazing",
+          weather: "晴天",
+          temperature: "17~22°C",
+          reply:
+            "陽光與溫和氣候為喜悅的您增添力量，一切都顯得特別美好，彷彿世界正溫柔地擁抱著你。",
+        },
+        {
+          mood: "amazing",
+          weather: "晴天",
+          temperature: "23~29°C",
+          reply:
+            "溫暖的天氣映照著燦爛心情，每個瞬間都充滿希望與可能，願這份幸福長存於心中。",
+        },
+        {
+          mood: "amazing",
+          weather: "晴天",
+          temperature: "30~40°C",
+          reply:
+            "即使酷熱難耐，您的心情仍閃耀如星，這份正能量將會照亮你與他人的世界。",
+        },
+        {
+          mood: "amazing",
+          weather: "陰天",
+          temperature: "0~8°C",
+          reply:
+            "陰沉的天空下，您仍保持著積極的心情，這樣的堅持與正面力量讓您在生活中更加堅韌。接受一切變化，未來充滿無限可能。",
+        },
+        {
+          mood: "amazing",
+          weather: "陰天",
+          temperature: "9~16°C",
+          reply:
+            "灰色的天空反襯出您的光芒，在這樣的日子裡依然微笑，是對生活最溫暖的回應。",
+        },
+        {
+          mood: "amazing",
+          weather: "陰天",
+          temperature: "17~22°C",
+          reply:
+            "即使天空不明朗，您仍懷抱希望。您內在的平靜與喜悅，是最珍貴的力量源泉。",
+        },
+        {
+          mood: "amazing",
+          weather: "陰天",
+          temperature: "23~29°C",
+          reply:
+            "舒適的氣溫與穩定心情交織出美好的一天，無論天色如何，您的光芒依舊閃耀。",
+        },
+        {
+          mood: "amazing",
+          weather: "陰天",
+          temperature: "30~40°C",
+          reply:
+            "悶熱與陰天未能影響您積極的心態，這份內心的穩定將引領您走向更寬廣的未來。",
+        },
+        {
+          mood: "amazing",
+          weather: "雨天",
+          temperature: "0~8°C",
+          reply:
+            "雨水滴落，氣溫寒冷，但您的心情卻如陽光般明亮。感恩這樣的時刻，讓您擁有包容與堅強，迎接生活中的各種挑戰。",
+        },
+        {
+          mood: "amazing",
+          weather: "雨天",
+          temperature: "9~16°C",
+          reply:
+            "細雨綿綿的日子裡，您的好心情如暖陽驅散陰霾，帶來無限溫暖與動力。",
+        },
+        {
+          mood: "amazing",
+          weather: "雨天",
+          temperature: "17~22°C",
+          reply:
+            "微涼雨意讓一切放慢腳步，您的快樂則使世界繼續旋轉，輕鬆自在地面對每一天。",
+        },
+        {
+          mood: "amazing",
+          weather: "雨天",
+          temperature: "23~29°C",
+          reply:
+            "雨中的愉悅是一種深刻的感受，願這樣的時光成為您生命中難忘的一頁。",
+        },
+        {
+          mood: "amazing",
+          weather: "雨天",
+          temperature: "30~40°C",
+          reply:
+            "即使炎熱潮濕，您的好心情讓一切變得輕盈。這份樂觀是生命中難能可貴的寶藏。",
+        },
+
+        // sad
+        {
+          mood: "sad",
+          weather: "晴天",
+          temperature: "0~8°C",
+          reply:
+            "寒冷的晴天裡，心情顯得格外沉重。也許陽光無法立即驅走陰霾，但您依然有權利慢慢療癒，給自己一點空間與時間。",
+        },
+        {
+          mood: "sad",
+          weather: "晴天",
+          temperature: "9~16°C",
+          reply:
+            "即使陽光照耀，內心仍舊感到低落。別急著強顏歡笑，允許自己脆弱，這本身就是一種力量的展現。",
+        },
+        {
+          mood: "sad",
+          weather: "晴天",
+          temperature: "17~22°C",
+          reply:
+            "在溫暖的陽光下感到憂傷，也許代表著您敏感而深刻地體會著生活的層次，請溫柔對待自己的感受。",
+        },
+        {
+          mood: "sad",
+          weather: "晴天",
+          temperature: "23~29°C",
+          reply:
+            "陽光普照的日子，若您心情低落，請相信這只是暫時的停歇，您正在為重新出發積蓄力量。",
+        },
+        {
+          mood: "sad",
+          weather: "晴天",
+          temperature: "30~40°C",
+          reply:
+            "烈日當空，心中的陰影卻無所遁形。但這樣的情緒也提醒您，該是時候好好休息與調整自己了。",
+        },
+        {
+          mood: "sad",
+          weather: "陰天",
+          temperature: "0~8°C",
+          reply:
+            "陰冷的天氣映照著內心的憂傷。這不是您的錯，每個人都會有低潮的時刻，重要的是給自己耐心。",
+        },
+        {
+          mood: "sad",
+          weather: "陰天",
+          temperature: "9~16°C",
+          reply:
+            "灰暗的天空和低溫讓人情緒低落。請相信，這一切都會過去，您值得更明亮的日子。",
+        },
+        {
+          mood: "sad",
+          weather: "陰天",
+          temperature: "17~22°C",
+          reply:
+            "天色灰濛濛，心也跟著沉了下來。但別擔心，一點點光也足以照亮整個黑暗，請相信自己。",
+        },
+        {
+          mood: "sad",
+          weather: "陰天",
+          temperature: "23~29°C",
+          reply:
+            "即使不冷不熱，心情卻說不出的沉悶。給自己一點溫柔的陪伴，無聲的安慰有時比語言更有力量。",
+        },
+        {
+          mood: "sad",
+          weather: "陰天",
+          temperature: "30~40°C",
+          reply:
+            "悶熱的陰天令人窒息，心情也一樣沉重。請記得，情緒的起伏是自然的，放自己一馬吧。",
+        },
+        {
+          mood: "sad",
+          weather: "雨天",
+          temperature: "0~8°C",
+          reply:
+            "冰冷的雨滴落下，也像是在傾訴內心的淚水。允許自己悲傷，這是一種釋放與重生的開始。",
+        },
+        {
+          mood: "sad",
+          weather: "雨天",
+          temperature: "9~16°C",
+          reply:
+            "綿綿細雨中，心情像被濕透般沉重。但每場雨後總有晴天，這也是人生的節奏與節氣。",
+        },
+        {
+          mood: "sad",
+          weather: "雨天",
+          temperature: "17~22°C",
+          reply:
+            "微涼的雨天，憂愁悄悄來臨。請記得，最深的悲傷也會因時間而變得輕盈。",
+        },
+        {
+          mood: "sad",
+          weather: "雨天",
+          temperature: "23~29°C",
+          reply:
+            "在這潮濕的午後，情緒如雨水般低落。請允許自己停下腳步，靜靜陪伴自己的情緒。",
+        },
+        {
+          mood: "sad",
+          weather: "雨天",
+          temperature: "30~40°C",
+          reply:
+            "濕熱的空氣與心中的悶痛交織。即使此刻沉重，但終有一天您會再次感受到輕盈與光亮。",
+        },
+
+        // calm
+        {
+          mood: "calm",
+          weather: "晴天",
+          temperature: "0~8°C",
+          reply:
+            "清冷的晴日中，您的心境平靜如水，讓思緒隨風輕輕流動，感受內心的安然與自在。",
+        },
+        {
+          mood: "calm",
+          weather: "晴天",
+          temperature: "9~16°C",
+          reply:
+            "陽光和煦，微涼的氣溫配合您的沉穩心情，使得今天成為理想的冥想與放鬆時光。",
+        },
+        {
+          mood: "calm",
+          weather: "晴天",
+          temperature: "17~22°C",
+          reply:
+            "舒適的氣候和晴朗的天空讓您感到心如止水，專注於當下，享受片刻寧靜。",
+        },
+        {
+          mood: "calm",
+          weather: "晴天",
+          temperature: "23~29°C",
+          reply:
+            "溫暖的陽光沐浴著大地，也溫柔撫慰您的心靈，讓平和成為日常的主旋律。",
+        },
+        {
+          mood: "calm",
+          weather: "晴天",
+          temperature: "30~40°C",
+          reply:
+            "炎熱的晴天中，您依然保持內心的冷靜與安詳，這種沉著是您最大的力量。",
+        },
+
+        {
+          mood: "calm",
+          weather: "陰天",
+          temperature: "0~8°C",
+          reply: "陰沉的天空下，您的心境平靜而深沉，猶如冬日湖面般清澈而安穩。",
+        },
+        {
+          mood: "calm",
+          weather: "陰天",
+          temperature: "9~16°C",
+          reply:
+            "陰天帶來柔和的光線，讓您得以放慢步調，沉澱內心，找到內在的平衡與安寧。",
+        },
+        {
+          mood: "calm",
+          weather: "陰天",
+          temperature: "17~22°C",
+          reply:
+            "灰蒙的天空中，您如同靜謐的山谷，平和而安詳，接受一切生命的變化。",
+        },
+        {
+          mood: "calm",
+          weather: "陰天",
+          temperature: "23~29°C",
+          reply:
+            "陰天的氣息與舒適溫度相融合，讓您的心靈感到寧靜與自在，像是溫柔的擁抱。",
+        },
+        {
+          mood: "calm",
+          weather: "陰天",
+          temperature: "30~40°C",
+          reply:
+            "悶熱的陰天中，您仍保持內心的平靜，讓熱浪也難以撼動這份沉穩與安穩。",
+        },
+
+        {
+          mood: "calm",
+          weather: "雨天",
+          temperature: "0~8°C",
+          reply: "寒冷的雨天裡，細雨輕撫您的心靈，帶來安寧與洗滌般的清新感受。",
+        },
+        {
+          mood: "calm",
+          weather: "雨天",
+          temperature: "9~16°C",
+          reply:
+            "雨水緩緩落下，您如同雨中的葉片般從容，心中充滿淡然的平靜與安定。",
+        },
+        {
+          mood: "calm",
+          weather: "雨天",
+          temperature: "17~22°C",
+          reply: "微涼雨天，給予您思考與反省的空間，讓心靈慢慢沉澱，恢復活力。",
+        },
+        {
+          mood: "calm",
+          weather: "雨天",
+          temperature: "23~29°C",
+          reply: "溫暖的雨季裡，您的心境如細雨般溫柔，保持著難得的寧靜與清明。",
+        },
+        {
+          mood: "calm",
+          weather: "雨天",
+          temperature: "30~40°C",
+          reply:
+            "炎熱雨天中，雨水帶來的涼意洗去煩躁，讓您感受到內心的平和與穩定。",
+        },
+
+        // tired
+        {
+          mood: "tired",
+          weather: "晴天",
+          temperature: "0~8°C",
+          reply:
+            "天氣寒冷且晴朗，您感到疲倦。適當休息與調整節奏，讓身心慢慢恢復活力。保持耐心，明天會更好。",
+        },
+        {
+          mood: "tired",
+          weather: "晴天",
+          temperature: "9~16°C",
+          reply:
+            "涼爽的晴天中，您的疲憊感依舊存在。嘗試深呼吸，重新調整心態，相信慢慢地，疲倦會被希望取代。",
+        },
+        {
+          mood: "tired",
+          weather: "晴天",
+          temperature: "17~22°C",
+          reply:
+            "溫暖的陽光中，您的疲憊逐漸減輕。學會感恩與接納，讓自己找到重新出發的勇氣與力量。",
+        },
+        {
+          mood: "tired",
+          weather: "晴天",
+          temperature: "23~29°C",
+          reply:
+            "陽光明媚，但疲憊仍存在。調整步伐，給自己更多包容，能量會慢慢回歸。",
+        },
+        {
+          mood: "tired",
+          weather: "晴天",
+          temperature: "30~40°C",
+          reply: "炎熱中帶著疲憊，適合短暫停歇。保持希望，讓精神恢復新生。",
+        },
+
+        {
+          mood: "tired",
+          weather: "陰天",
+          temperature: "0~8°C",
+          reply:
+            "陰沉的天空與低溫讓人倍感疲憊。給自己一點時間和空間，放慢腳步，逐漸找回內心的平靜與力量。",
+        },
+        {
+          mood: "tired",
+          weather: "陰天",
+          temperature: "9~16°C",
+          reply:
+            "陰天的氣氛與疲憊感交織，提醒您要好好照顧自己。靜心冥想，尋找內在的力量，明天將會更有動力。",
+        },
+        {
+          mood: "tired",
+          weather: "陰天",
+          temperature: "17~22°C",
+          reply:
+            "陰天掩映疲憊，但您的堅持不變。給自己時間，堅信努力總會有回報，迎接更好的明天。",
+        },
+        {
+          mood: "tired",
+          weather: "陰天",
+          temperature: "23~29°C",
+          reply:
+            "悶熱陰天讓人疲憊，適合靜靜休息。相信平靜的力量，重新找回自我。",
+        },
+        {
+          mood: "tired",
+          weather: "陰天",
+          temperature: "30~40°C",
+          reply: "悶熱與陰天交織，疲憊感明顯。給自己時間，讓內心慢慢平復。",
+        },
+
+        {
+          mood: "tired",
+          weather: "雨天",
+          temperature: "0~8°C",
+          reply:
+            "雨天寒冷容易讓人感到倦怠。學會在這些時刻善待自己，適度放鬆，讓疲憊漸漸消散，重新積蓄能量。",
+        },
+        {
+          mood: "tired",
+          weather: "雨天",
+          temperature: "9~16°C",
+          reply:
+            "雨滴聲伴隨疲憊，適合給自己一點溫柔。允許自己慢下來，休息是為了更好的前行。",
+        },
+        {
+          mood: "tired",
+          weather: "雨天",
+          temperature: "17~22°C",
+          reply:
+            "雨天的節奏讓人想休息。好好傾聽自己的心聲，放下壓力，讓靈魂獲得喘息。",
+        },
+        {
+          mood: "tired",
+          weather: "雨天",
+          temperature: "23~29°C",
+          reply: "雨滴紛飛，伴隨疲累。讓心靈放空，等待明朗的天空再次出現。",
+        },
+        {
+          mood: "tired",
+          weather: "雨天",
+          temperature: "30~40°C",
+          reply: "雨天與高溫帶來挑戰，讓自己放鬆，準備迎接新的開始。",
+        },
+
+        // notsogood
+        {
+          mood: "notsogood",
+          weather: "晴天",
+          temperature: "0~8°C",
+          reply:
+            "雖然晴天帶來明亮，但您感覺心情有些低落。給自己一點空間，慢慢調整，溫暖會逐漸回來。",
+        },
+        {
+          mood: "notsogood",
+          weather: "晴天",
+          temperature: "9~16°C",
+          reply:
+            "涼爽的晴天中，心情略顯沉重。深呼吸，提醒自己不必急於改變，一切都會慢慢好轉。",
+        },
+        {
+          mood: "notsogood",
+          weather: "晴天",
+          temperature: "17~22°C",
+          reply:
+            "陽光溫和，卻掩蓋不了您的煩憂。試著從小事找到安慰，給自己時間，逐步釋放壓力。",
+        },
+        {
+          mood: "notsogood",
+          weather: "晴天",
+          temperature: "23~29°C",
+          reply:
+            "溫暖的陽光下，您或許仍感不安。記得接納自己的情緒，未來的日子會越來越好。",
+        },
+        {
+          mood: "notsogood",
+          weather: "晴天",
+          temperature: "30~40°C",
+          reply:
+            "炎熱的天氣讓心情更加沉重。保持耐心，適度休息，慢慢找到內心的平靜。",
+        },
+
+        {
+          mood: "notsogood",
+          weather: "陰天",
+          temperature: "0~8°C",
+          reply:
+            "陰沉的天氣似乎映照了您的心情。不要害怕低落，給自己一點時間，光明會再次來臨。",
+        },
+        {
+          mood: "notsogood",
+          weather: "陰天",
+          temperature: "9~16°C",
+          reply:
+            "灰色的天空下，情緒難免黯淡。試著尋找身邊的小確幸，哪怕是一絲溫暖，也值得珍惜。",
+        },
+        {
+          mood: "notsogood",
+          weather: "陰天",
+          temperature: "17~22°C",
+          reply:
+            "陰天籠罩著您的思緒。請相信，這只是暫時，明天會有更多希望等待著您。",
+        },
+        {
+          mood: "notsogood",
+          weather: "陰天",
+          temperature: "23~29°C",
+          reply: "悶悶不樂的心情難以掩蓋。嘗試放下負擔，讓自己有機會重新呼吸。",
+        },
+        {
+          mood: "notsogood",
+          weather: "陰天",
+          temperature: "30~40°C",
+          reply:
+            "悶熱的天氣讓心情沉重。給自己適當的休息，讓疲憊的心靈慢慢修復。",
+        },
+
+        {
+          mood: "notsogood",
+          weather: "雨天",
+          temperature: "0~8°C",
+          reply: "寒冷的雨天與內心的沈重交織。請允許自己悲傷，這是療癒的開始。",
+        },
+        {
+          mood: "notsogood",
+          weather: "雨天",
+          temperature: "9~16°C",
+          reply:
+            "雨滴敲打窗戶，彷彿呼應您的心情。慢慢調整步伐，給自己空間療傷。",
+        },
+        {
+          mood: "notsogood",
+          weather: "雨天",
+          temperature: "17~22°C",
+          reply:
+            "雨天的寧靜中，內心的低潮漸漸浮現。接納這份感受，給自己時間成長。",
+        },
+        {
+          mood: "notsogood",
+          weather: "雨天",
+          temperature: "23~29°C",
+          reply: "雨中漫步，伴隨著輕微的憂傷。相信雨過天晴，您將迎來新的開始。",
+        },
+        {
+          mood: "notsogood",
+          weather: "雨天",
+          temperature: "30~40°C",
+          reply:
+            "悶熱潮濕的雨天讓心情更沉重。請記得，暴風雨過後，陽光依然會回來。",
+        },
+
+        // itsabadday
+        {
+          mood: "itsabadday",
+          weather: "晴天",
+          temperature: "0~8°C",
+          reply:
+            "雖然晴朗的天空，今天卻是低落的一天。給自己一點時間，明天會帶來新的希望。",
+        },
+        {
+          mood: "itsabadday",
+          weather: "晴天",
+          temperature: "9~16°C",
+          reply: "涼爽的晴天裡，心情依然沉重。試著深呼吸，讓壓力慢慢釋放。",
+        },
+        {
+          mood: "itsabadday",
+          weather: "晴天",
+          temperature: "17~22°C",
+          reply: "溫暖的陽光無法驅散今天的陰霾，請相信，明天會有不同的風景。",
+        },
+        {
+          mood: "itsabadday",
+          weather: "晴天",
+          temperature: "23~29°C",
+          reply:
+            "溫暖的天氣下，情緒卻難以平復。給自己一個擁抱，別急著強迫自己振作。",
+        },
+        {
+          mood: "itsabadday",
+          weather: "晴天",
+          temperature: "30~40°C",
+          reply:
+            "炎熱的天氣加重了不安，但請記得，這一切終將過去，耐心等待曙光。",
+        },
+
+        {
+          mood: "itsabadday",
+          weather: "陰天",
+          temperature: "0~8°C",
+          reply:
+            "陰沉的天空與心情相呼應，今天充滿挑戰。給自己空間，明天會更好。",
+        },
+        {
+          mood: "itsabadday",
+          weather: "陰天",
+          temperature: "9~16°C",
+          reply:
+            "陰天中，情緒低落時更需善待自己。緩緩走過這段路，溫柔對待心靈。",
+        },
+        {
+          mood: "itsabadday",
+          weather: "陰天",
+          temperature: "17~22°C",
+          reply: "雖然陰天籠罩，請相信，黑暗過後總有光明等待您。",
+        },
+        {
+          mood: "itsabadday",
+          weather: "陰天",
+          temperature: "23~29°C",
+          reply: "陰沉悶熱的天氣加重情緒負擔，保持希望，慢慢尋找出口。",
+        },
+        {
+          mood: "itsabadday",
+          weather: "陰天",
+          temperature: "30~40°C",
+          reply: "悶熱的陰天與糟糕的心情交織，請讓自己好好休息，明天會不一樣。",
+        },
+
+        {
+          mood: "itsabadday",
+          weather: "雨天",
+          temperature: "0~8°C",
+          reply: "寒冷雨天配合著不佳心情，請溫柔對待自己，這是治癒的開始。",
+        },
+        {
+          mood: "itsabadday",
+          weather: "雨天",
+          temperature: "9~16°C",
+          reply: "雨滴聲中，心情沉重。給自己時間，讓心靈慢慢平靜下來。",
+        },
+        {
+          mood: "itsabadday",
+          weather: "雨天",
+          temperature: "17~22°C",
+          reply: "雨天的寧靜與內心的糟糕交織，請堅信，陰霾終將散去。",
+        },
+        {
+          mood: "itsabadday",
+          weather: "雨天",
+          temperature: "23~29°C",
+          reply: "雨中難過時刻，允許自己感受痛楚，這是成長的一部分。",
+        },
+        {
+          mood: "itsabadday",
+          weather: "雨天",
+          temperature: "30~40°C",
+          reply: "悶熱雨天裡，心情低迷。請給自己多一些耐心與愛，明天會更好。",
+        },
+      ];
+
+      //////////////////////心靈小語//////////////////////
+
+      // 修改事件監聽，改成用心情+天氣+溫度找回應
+      document.getElementById("mood").addEventListener("change", () => {
+        const moodKey = document.getElementById("mood").value;
+        const box5Text = document.getElementById("box5").innerText.trim();
+        const match = box5Text.match(/，(.+?)，(.+?°C)/);
+        let replyText = "請選擇心情與正確的天氣資訊，我們會為您提供建議。";
+
+        if (moodKey && match) {
+          const weather = match[1];
+          const temperature = match[2];
+
+          const found = moodWeatherTemperatureReplies.find(
+            (item) =>
+              item.mood === moodKey &&
+              item.weather === weather &&
+              item.temperature === temperature
+          );
+
+          if (found) {
+            replyText = found.reply;
+          }
+        }
+
+        document.getElementById(
+          "moodResponse"
+        ).innerHTML = `<p>${replyText}</p>`;
+
+        renderBox6();
+      });
+
+      /////////////////////////////////////////////
+
+      // ==================天氣==================
+
+      const apiKey = "CWA-097E2D6C-757F-44B5-8383-59D4B62FE18A";
+
+      const cwaCities = [
+        "臺北市",
+        "新北市",
+        "桃園市",
+        "臺中市",
+        "臺南市",
+        "高雄市",
+        "基隆市",
+        "新竹縣",
+        "新竹市",
+        "苗栗縣",
+        "彰化縣",
+        "南投縣",
+        "雲林縣",
+        "嘉義縣",
+        "嘉義市",
+        "屏東縣",
+        "宜蘭縣",
+        "花蓮縣",
+        "臺東縣",
+        "澎湖縣",
+        "金門縣",
+        "連江縣",
+      ];
+
+      function reverseGeocode(lat, lon, callback) {
+        const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
+        fetch(url)
+          .then((res) => res.json())
+          .then((data) => {
+            const address = data.address;
+            let city =
+              address.county || address.city || address.state || "臺北市";
+            city = city.replace("台", "臺");
+            const match = cwaCities.find((name) => city.includes(name));
+            callback(match || "臺北市");
+          });
+      }
+
+      function getWeatherCategory(wxText) {
+        const d = wxText.toLowerCase();
+        if (d.includes("雷") || d.includes("雨")) return "雨天";
+        if (d.includes("多雲") || d.includes("時晴")) return "晴天";
+        return "陰天";
+      }
+
+      function getTemperatureRange(min, max) {
+        const avg = (min + max) / 2;
+        if (avg <= 8) return "0~8°C";
+        if (avg <= 16) return "9~16°C";
+        if (avg <= 22) return "17~22°C";
+        if (avg <= 29) return "23~29°C";
+        return "30~40°C";
+      }
+
+      function fetchWeather(cityName) {
+        const url = `https://opendata.cwa.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=${apiKey}&locationName=${cityName}`;
+        fetch(url)
+          .then((res) => res.json())
+          .then((data) => {
+            const loc = data.records.location[0];
+            const wxRaw = loc.weatherElement.find((e) => e.elementName === "Wx")
+              .time[0].parameter.parameterName;
+            const minT = parseInt(
+              loc.weatherElement.find((e) => e.elementName === "MinT").time[0]
+                .parameter.parameterName
+            );
+            const maxT = parseInt(
+              loc.weatherElement.find((e) => e.elementName === "MaxT").time[0]
+                .parameter.parameterName
+            );
+            const pop = loc.weatherElement.find((e) => e.elementName === "PoP")
+              .time[0].parameter.parameterName;
+
+            const weatherCategory = getWeatherCategory(wxRaw);
+            const tempRange = getTemperatureRange(minT, maxT);
+            const weatherInfo = `${cityName}，${weatherCategory}，${tempRange}`;
+
+            document.getElementById("weather").innerText = weatherInfo;
+            document.body.className =
+              weatherCategory === "晴天類"
+                ? "sunny"
+                : weatherCategory === "陰天類"
+                ? "cloudy"
+                : weatherCategory === "雨天類"
+                ? "rainy"
+                : "";
+          });
+      }
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const lat = pos.coords.latitude;
+            const lon = pos.coords.longitude;
+            reverseGeocode(lat, lon, (city) => {
+              fetchWeather(city);
+            });
+          },
+          () => {
+            document.getElementById("weather").innerText =
+              "定位失敗，請允許瀏覽器取用位置資訊。";
+          }
+        );
+      } else {
+        document.getElementById("weather").innerText =
+          "您的瀏覽器不支援定位功能。";
+      }
+
+      // ==================購物車功能==================
+
+      const cart = [];
+      const cartModal = document.getElementById("cart-modal");
+      const cartItems = document.getElementById("cart-items");
+      const cartBtn = document.getElementById("cart-icon");
+      const submitBtn = document.getElementById("submit-order");
+
+      cartBtn.addEventListener("click", () => {
+        cartModal.classList.toggle("show");
+      });
+
+      ///////////////////////////////////////////////
+
+      function showPopup(message) {
+        const popup = document.getElementById("popup");
+        const popupContent = document.getElementById("popupContent");
+        popupContent.innerText = message;
+        popup.classList.add("show");
+        setTimeout(() => {
+          popup.classList.remove("show");
+        }, 2000);
+      }
+
+      ///////////////////////////////////////////////
+
+      submitBtn.addEventListener("click", () => {
+        if (cart.length === 0) {
+          showPopup("您的購物車是空的喔！");
+          return;
+        }
+        showPopup("訂單已送出！");
+        cart.length = 0;
+        renderCart();
+        cartModal.classList.remove("show");
+      });
+
+      function addToCart(drink, sweetness) {
+        cart.push(`${drink}（${sweetness}）`);
+        renderCart();
+        showPopup(`成功加入購物車`);
+      }
+
+      function renderCart() {
+        cartItems.innerHTML = "";
+        cart.forEach((item) => {
+          const li = document.createElement("li");
+          li.textContent = item;
+          cartItems.appendChild(li);
+        });
+      }
+
+      document.addEventListener("click", (e) => {
+        const cartModal = document.getElementById("cart-modal");
+        const cartIcon = document.getElementById("cart-icon");
+        if (!cartModal.contains(e.target) && !cartIcon.contains(e.target)) {
+          cartModal.classList.remove("show");
+        }
+      });
+
+      // ==================跳出視窗==================
+
+      // ==================購物車功能==================
+
+      const moodMap = {
+        amazing: "開心",
+        sad: "感覺有點難過",
+        calm: "心情平靜",
+        tired: "感覺有點累",
+        notsogood: "心情不太好",
+        itsabadday: "心情很不好",
+      };
+
+      // ==================送單功能==================
+
+      function showAlert(msg) {
+        document.getElementById("alert-text").innerText = msg;
+        document.getElementById("alert-modal").classList.add("show");
+      }
+
+      const drinkRecommendations = [
+        {
+          weather: "晴天",
+          temperature: "0~8°C",
+          mood: "開心",
+          drinks: ["抹茶拿鐵（熱）", "柳橙汁（冰）", "白桃烏龍茶（冰）"],
+        },
+        {
+          weather: "晴天",
+          temperature: "0~8°C",
+          mood: "感覺有點難過",
+          drinks: ["黑糖薑茶（熱）", "洛神花茶（熱）", "焦糖瑪奇朵（熱）"],
+        },
+        {
+          weather: "晴天",
+          temperature: "0~8°C",
+          mood: "心情平靜",
+          drinks: ["桂花綠茶（熱）", "卡布奇諾（熱）", "美式咖啡（冰）"],
+        },
+        {
+          weather: "晴天",
+          temperature: "0~8°C",
+          mood: "感覺有點累",
+          drinks: ["冷萃咖啡（冰）", "熱可可（熱）", "可爾必思氣泡飲（冰）"],
+        },
+        {
+          weather: "晴天",
+          temperature: "0~8°C",
+          mood: "心情不太好",
+          drinks: ["藍莓優格冰沙（冰）", "薰衣草奶茶（熱）", "抹茶拿鐵（冰）"],
+        },
+        {
+          weather: "晴天",
+          temperature: "0~8°C",
+          mood: "心情很不好",
+          drinks: ["黑糖鮮奶（熱）", "西西里檸檬咖啡（冰）", "熱柚子茶（熱）"],
+        },
+        {
+          weather: "陰天",
+          temperature: "0~8°C",
+          mood: "開心",
+          drinks: ["拿鐵（熱）", "可爾必思氣泡飲（冰）", "伯爵奶茶（冰）"],
+        },
+        {
+          weather: "陰天",
+          temperature: "0~8°C",
+          mood: "感覺有點難過",
+          drinks: ["熱柚子茶（熱）", "榛果拿鐵（熱）", "洛神花茶（熱）"],
+        },
+        {
+          weather: "陰天",
+          temperature: "0~8°C",
+          mood: "心情平靜",
+          drinks: ["百香果綠茶（冰）", "抹茶拿鐵（熱）", "美式咖啡（熱）"],
+        },
+        {
+          weather: "陰天",
+          temperature: "0~8°C",
+          mood: "感覺有點累",
+          drinks: ["黑糖鮮奶（冰）", "草莓氣泡飲（冰）", "焦糖瑪奇朵（冰）"],
+        },
+        {
+          weather: "陰天",
+          temperature: "0~8°C",
+          mood: "心情不太好",
+          drinks: ["西西里檸檬咖啡（冰）", "黑糖薑茶（熱）", "拿鐵（冰）"],
+        },
+        {
+          weather: "陰天",
+          temperature: "0~8°C",
+          mood: "心情很不好",
+          drinks: ["冷萃咖啡（冰）", "熱可可（熱）", "薰衣草奶茶（熱）"],
+        },
+        {
+          weather: "雨天",
+          temperature: "0~8°C",
+          mood: "開心",
+          drinks: ["伯爵奶茶（熱）", "藍莓優格冰沙（冰）", "美式咖啡（冰）"],
+        },
+        {
+          weather: "雨天",
+          temperature: "0~8°C",
+          mood: "感覺有點難過",
+          drinks: ["黑糖鮮奶（熱）", "洛神花茶（熱）", "桂花綠茶（熱）"],
+        },
+        {
+          weather: "雨天",
+          temperature: "0~8°C",
+          mood: "心情平靜",
+          drinks: ["卡布奇諾（熱）", "熱可可（熱）", "白桃烏龍茶（冰）"],
+        },
+        {
+          weather: "雨天",
+          temperature: "0~8°C",
+          mood: "感覺有點累",
+          drinks: ["拿鐵（冰）", "焦糖瑪奇朵（冰）", "柳橙汁（冰）"],
+        },
+        {
+          weather: "雨天",
+          temperature: "0~8°C",
+          mood: "心情不太好",
+          drinks: ["熱柚子茶（熱）", "可爾必思氣泡飲（冰）", "黑糖薑茶（熱）"],
+        },
+        {
+          weather: "雨天",
+          temperature: "0~8°C",
+          mood: "心情很不好",
+          drinks: ["抹茶拿鐵（熱）", "冷萃咖啡（冰）", "薰衣草奶茶（熱）"],
+        },
+        {
+          weather: "晴天",
+          temperature: "9~16°C",
+          mood: "開心",
+          drinks: ["柳橙汁（冰）", "卡布奇諾（熱）", "百香果綠茶（冰）"],
+        },
+        {
+          weather: "晴天",
+          temperature: "9~16°C",
+          mood: "感覺有點難過",
+          drinks: ["熱可可（熱）", "冷萃咖啡（冰）", "薰衣草奶茶（熱）"],
+        },
+        {
+          weather: "晴天",
+          temperature: "9~16°C",
+          mood: "心情平靜",
+          drinks: ["草莓氣泡飲（冰）", "抹茶拿鐵（熱）", "摩卡咖啡（熱）"],
+        },
+        {
+          weather: "晴天",
+          temperature: "9~16°C",
+          mood: "感覺有點累",
+          drinks: ["可爾必思氣泡飲（冰）", "洛神花茶（熱）", "榛果拿鐵（熱）"],
+        },
+        {
+          weather: "晴天",
+          temperature: "9~16°C",
+          mood: "心情不太好",
+          drinks: ["抹茶拿鐵（冰）", "焦糖瑪奇朵（冰）", "黑糖鮮奶（冰）"],
+        },
+        {
+          weather: "晴天",
+          temperature: "9~16°C",
+          mood: "心情很不好",
+          drinks: ["桂花綠茶（熱）", "美式咖啡（冰）", "白桃烏龍茶（冰）"],
+        },
+        {
+          weather: "陰天",
+          temperature: "9~16°C",
+          mood: "開心",
+          drinks: ["焦糖瑪奇朵（熱）", "拿鐵（冰）", "黑糖鮮奶（熱）"],
+        },
+        {
+          weather: "陰天",
+          temperature: "9~16°C",
+          mood: "感覺有點難過",
+          drinks: ["西西里檸檬咖啡（冰）", "伯爵奶茶（冰）", "熱柚子茶（熱）"],
+        },
+        {
+          weather: "陰天",
+          temperature: "9~16°C",
+          mood: "心情平靜",
+          drinks: ["美式咖啡（熱）", "黑糖薑茶（熱）", "拿鐵（熱）"],
+        },
+        {
+          weather: "陰天",
+          temperature: "9~16°C",
+          mood: "感覺有點累",
+          drinks: ["可爾必思氣泡飲（冰）", "抹茶拿鐵（熱）", "柳橙汁（冰）"],
+        },
+        {
+          weather: "陰天",
+          temperature: "9~16°C",
+          mood: "心情不太好",
+          drinks: ["藍莓優格冰沙（冰）", "伯爵奶茶（熱）", "焦糖瑪奇朵（熱）"],
+        },
+        {
+          weather: "陰天",
+          temperature: "9~16°C",
+          mood: "心情很不好",
+          drinks: ["洛神花茶（熱）", "美式咖啡（冰）", "黑糖鮮奶（冰）"],
+        },
+        {
+          weather: "雨天",
+          temperature: "9~16°C",
+          mood: "開心",
+          drinks: ["抹茶拿鐵（冰）", "桂花綠茶（熱）", "熱柚子茶（熱）"],
+        },
+        {
+          weather: "雨天",
+          temperature: "9~16°C",
+          mood: "感覺有點難過",
+          drinks: ["焦糖瑪奇朵（冰）", "摩卡咖啡（熱）", "草莓氣泡飲（冰）"],
+        },
+        {
+          weather: "雨天",
+          temperature: "9~16°C",
+          mood: "心情平靜",
+          drinks: [
+            "百香果綠茶（冰）",
+            "薰衣草奶茶（熱）",
+            "可爾必思氣泡飲（冰）",
+          ],
+        },
+        {
+          weather: "雨天",
+          temperature: "9~16°C",
+          mood: "感覺有點累",
+          drinks: ["榛果拿鐵（熱）", "柳橙汁（冰）", "拿鐵（熱）"],
+        },
+        {
+          weather: "雨天",
+          temperature: "9~16°C",
+          mood: "心情不太好",
+          drinks: ["藍莓優格冰沙（冰）", "美式咖啡（熱）", "黑糖薑茶（熱）"],
+        },
+        {
+          weather: "雨天",
+          temperature: "9~16°C",
+          mood: "心情很不好",
+          drinks: ["白桃烏龍茶（冰）", "卡布奇諾（熱）", "冷萃咖啡（冰）"],
+        },
+        {
+          weather: "晴天",
+          temperature: "17~22°C",
+          mood: "開心",
+          drinks: ["洛神花茶（熱）", "蜂蜜檸檬水（冰）", "抹茶拿鐵（冰）"],
+        },
+        {
+          weather: "晴天",
+          temperature: "17~22°C",
+          mood: "感覺有點難過",
+          drinks: ["拿鐵（冰）", "抹茶拿鐵（冰）", "拿鐵（熱）"],
+        },
+        {
+          weather: "晴天",
+          temperature: "17~22°C",
+          mood: "心情平靜",
+          drinks: ["熱可可（熱）", "薰衣草奶茶（熱）", "桂花綠茶（熱）"],
+        },
+        {
+          weather: "晴天",
+          temperature: "17~22°C",
+          mood: "感覺有點累",
+          drinks: [
+            "西西里檸檬咖啡（冰）",
+            "藍莓優格冰沙（冰）",
+            "洛神花茶（熱）",
+          ],
+        },
+        {
+          weather: "晴天",
+          temperature: "17~22°C",
+          mood: "心情不太好",
+          drinks: ["黑糖鮮奶（冰）", "黑糖薑茶（熱）", "西西里檸檬咖啡（冰）"],
+        },
+        {
+          weather: "晴天",
+          temperature: "17~22°C",
+          mood: "心情很不好",
+          drinks: ["黑糖薑茶（熱）", "抹茶拿鐵（冰）", "薰衣草奶茶（熱）"],
+        },
+        {
+          weather: "陰天",
+          temperature: "17~22°C",
+          mood: "開心",
+          drinks: ["黑糖薑茶（熱）", "抹茶拿鐵（熱）", "熱可可（熱）"],
+        },
+        {
+          weather: "陰天",
+          temperature: "17~22°C",
+          mood: "感覺有點難過",
+          drinks: ["焦糖瑪奇朵（熱）", "藍莓優格冰沙（冰）", "桂花綠茶（熱）"],
+        },
+        {
+          weather: "陰天",
+          temperature: "17~22°C",
+          mood: "心情平靜",
+          drinks: ["黑糖薑茶（熱）", "美式咖啡（冰）", "美式咖啡（熱）"],
+        },
+        {
+          weather: "陰天",
+          temperature: "17~22°C",
+          mood: "感覺有點累",
+          drinks: ["蜂蜜檸檬水（冰）", "冷萃咖啡（冰）", "拿鐵（冰）"],
+        },
+        {
+          weather: "陰天",
+          temperature: "17~22°C",
+          mood: "心情不太好",
+          drinks: ["伯爵奶茶（熱）", "拿鐵（熱）", "柳橙汁（冰）"],
+        },
+        {
+          weather: "陰天",
+          temperature: "17~22°C",
+          mood: "心情很不好",
+          drinks: ["卡布奇諾（熱）", "熱可可（熱）", "摩卡咖啡（熱）"],
+        },
+        {
+          weather: "雨天",
+          temperature: "17~22°C",
+          mood: "開心",
+          drinks: ["焦糖瑪奇朵（熱）", "伯爵奶茶（熱）", "焦糖瑪奇朵（冰）"],
+        },
+        {
+          weather: "雨天",
+          temperature: "17~22°C",
+          mood: "感覺有點難過",
+          drinks: ["白桃烏龍茶（冰）", "熱柚子茶（熱）", "拿鐵（熱）"],
+        },
+        {
+          weather: "雨天",
+          temperature: "17~22°C",
+          mood: "心情平靜",
+          drinks: ["卡布奇諾（熱）", "西西里檸檬咖啡（冰）", "抹茶拿鐵（熱）"],
+        },
+        {
+          weather: "雨天",
+          temperature: "17~22°C",
+          mood: "感覺有點累",
+          drinks: ["榛果拿鐵（熱）", "黑糖鮮奶（冰）", "藍莓優格冰沙（冰）"],
+        },
+        {
+          weather: "雨天",
+          temperature: "17~22°C",
+          mood: "心情不太好",
+          drinks: ["熱柚子茶（熱）", "黑糖鮮奶（冰）", "西西里檸檬咖啡（冰）"],
+        },
+        {
+          weather: "雨天",
+          temperature: "17~22°C",
+          mood: "心情很不好",
+          drinks: ["白桃烏龍茶（冰）", "抹茶拿鐵（熱）", "拿鐵（冰）"],
+        },
+        {
+          weather: "晴天",
+          temperature: "23~29°C",
+          mood: "開心",
+          drinks: ["草莓氣泡飲（冰）", "拿鐵（冰）", "黑糖鮮奶（熱）"],
+        },
+        {
+          weather: "晴天",
+          temperature: "23~29°C",
+          mood: "感覺有點難過",
+          drinks: ["百香果綠茶（冰）", "柳橙汁（冰）", "洛神花茶（熱）"],
+        },
+        {
+          weather: "晴天",
+          temperature: "23~29°C",
+          mood: "心情平靜",
+          drinks: ["草莓氣泡飲（冰）", "焦糖瑪奇朵（熱）", "黑糖鮮奶（熱）"],
+        },
+        {
+          weather: "晴天",
+          temperature: "23~29°C",
+          mood: "感覺有點累",
+          drinks: ["拿鐵（熱）", "薰衣草奶茶（熱）", "冷萃咖啡（冰）"],
+        },
+        {
+          weather: "晴天",
+          temperature: "23~29°C",
+          mood: "心情不太好",
+          drinks: ["白桃烏龍茶（冰）", "抹茶拿鐵（熱）", "柳橙汁（冰）"],
+        },
+        {
+          weather: "晴天",
+          temperature: "23~29°C",
+          mood: "心情很不好",
+          drinks: ["抹茶拿鐵（冰）", "草莓氣泡飲（冰）", "洛神花茶（熱）"],
+        },
+        {
+          weather: "陰天",
+          temperature: "23~29°C",
+          mood: "開心",
+          drinks: [
+            "美式咖啡（冰）",
+            "可爾必思氣泡飲（冰）",
+            "焦糖瑪奇朵（冰）",
+          ],
+        },
+        {
+          weather: "陰天",
+          temperature: "23~29°C",
+          mood: "感覺有點難過",
+          drinks: ["卡布奇諾（熱）", "黑糖鮮奶（冰）", "伯爵奶茶（熱）"],
+        },
+        {
+          weather: "陰天",
+          temperature: "23~29°C",
+          mood: "心情平靜",
+          drinks: ["白桃烏龍茶（冰）", "蜂蜜檸檬水（冰）", "美式咖啡（冰）"],
+        },
+        {
+          weather: "陰天",
+          temperature: "23~29°C",
+          mood: "感覺有點累",
+          drinks: ["拿鐵（冰）", "熱柚子茶（熱）", "白桃烏龍茶（冰）"],
+        },
+        {
+          weather: "陰天",
+          temperature: "23~29°C",
+          mood: "心情不太好",
+          drinks: ["美式咖啡（冰）", "西西里檸檬咖啡（冰）", "卡布奇諾（熱）"],
+        },
+        {
+          weather: "陰天",
+          temperature: "23~29°C",
+          mood: "心情很不好",
+          drinks: ["美式咖啡（冰）", "焦糖瑪奇朵（冰）", "抹茶拿鐵（熱）"],
+        },
+        {
+          weather: "雨天",
+          temperature: "23~29°C",
+          mood: "開心",
+          drinks: ["拿鐵（冰）", "柳橙汁（冰）", "卡布奇諾（熱）"],
+        },
+        {
+          weather: "雨天",
+          temperature: "23~29°C",
+          mood: "感覺有點難過",
+          drinks: ["草莓氣泡飲（冰）", "百香果綠茶（冰）", "美式咖啡（冰）"],
+        },
+        {
+          weather: "雨天",
+          temperature: "23~29°C",
+          mood: "心情平靜",
+          drinks: ["白桃烏龍茶（冰）", "抹茶拿鐵（熱）", "焦糖瑪奇朵（冰）"],
+        },
+        {
+          weather: "雨天",
+          temperature: "23~29°C",
+          mood: "感覺有點累",
+          drinks: ["黑糖鮮奶（熱）", "黑糖薑茶（熱）", "百香果綠茶（冰）"],
+        },
+        {
+          weather: "雨天",
+          temperature: "23~29°C",
+          mood: "心情不太好",
+          drinks: [
+            "拿鐵（冰）",
+            "可爾必思氣泡飲（冰）",
+            "西西里檸檬咖啡（冰）",
+          ],
+        },
+        {
+          weather: "雨天",
+          temperature: "23~29°C",
+          mood: "心情很不好",
+          drinks: ["熱可可（熱）", "草莓氣泡飲（冰）", "洛神花茶（熱）"],
+        },
+        {
+          weather: "晴天",
+          temperature: "30~40°C",
+          mood: "開心",
+          drinks: ["西西里檸檬咖啡（冰）", "柳橙汁（冰）", "抹茶拿鐵（冰）"],
+        },
+        {
+          weather: "晴天",
+          temperature: "30~40°C",
+          mood: "感覺有點難過",
+          drinks: ["熱柚子茶（熱）", "洛神花茶（熱）", "榛果拿鐵（熱）"],
+        },
+        {
+          weather: "晴天",
+          temperature: "30~40°C",
+          mood: "心情平靜",
+          drinks: ["可爾必思氣泡飲（冰）", "伯爵奶茶（冰）", "美式咖啡（冰）"],
+        },
+        {
+          weather: "晴天",
+          temperature: "30~40°C",
+          mood: "感覺有點累",
+          drinks: ["草莓氣泡飲（冰）", "冷萃咖啡（冰）", "卡布奇諾（熱）"],
+        },
+        {
+          weather: "晴天",
+          temperature: "30~40°C",
+          mood: "心情不太好",
+          drinks: ["抹茶拿鐵（熱）", "桂花綠茶（熱）", "藍莓優格冰沙（冰）"],
+        },
+        {
+          weather: "晴天",
+          temperature: "30~40°C",
+          mood: "心情很不好",
+          drinks: ["黑糖鮮奶（冰）", "摩卡咖啡（熱）", "伯爵奶茶（熱）"],
+        },
+        {
+          weather: "陰天",
+          temperature: "30~40°C",
+          mood: "開心",
+          drinks: ["拿鐵（冰）", "百香果綠茶（冰）", "薰衣草奶茶（熱）"],
+        },
+        {
+          weather: "陰天",
+          temperature: "30~40°C",
+          mood: "感覺有點難過",
+          drinks: ["美式咖啡（熱）", "焦糖瑪奇朵（冰）", "柳橙汁（冰）"],
+        },
+        {
+          weather: "陰天",
+          temperature: "30~40°C",
+          mood: "心情平靜",
+          drinks: ["抹茶拿鐵（冰）", "桂花綠茶（熱）", "熱可可（熱）"],
+        },
+        {
+          weather: "陰天",
+          temperature: "30~40°C",
+          mood: "感覺有點累",
+          drinks: ["黑糖鮮奶（熱）", " 白桃烏龍茶（冰）", "焦糖瑪奇朵（熱）"],
+        },
+        {
+          weather: "陰天",
+          temperature: "30~40°C",
+          mood: "心情不太好",
+          drinks: ["伯爵奶茶（冰）", "可爾必思氣泡飲（冰）", "黑糖薑茶（熱）"],
+        },
+        {
+          weather: "陰天",
+          temperature: "30~40°C",
+          mood: "心情很不好",
+          drinks: ["榛果拿鐵（熱）", "藍莓優格冰沙（冰）", "抹茶拿鐵（熱）"],
+        },
+        {
+          weather: "雨天",
+          temperature: "30~40°C",
+          mood: "開心",
+          drinks: ["摩卡咖啡（熱）", "草莓氣泡飲（冰）", "冷萃咖啡（冰）"],
+        },
+        {
+          weather: "雨天",
+          temperature: "30~40°C",
+          mood: "感覺有點難過",
+          drinks: ["熱柚子茶（熱）", "抹茶拿鐵（冰）", "柳橙汁（冰）"],
+        },
+        {
+          weather: "雨天",
+          temperature: "30~40°C",
+          mood: "心情平靜",
+          drinks: ["卡布奇諾（熱）", "黑糖鮮奶（冰）", "百香果綠茶（冰）"],
+        },
+        {
+          weather: "雨天",
+          temperature: "30~40°C",
+          mood: "感覺有點累",
+          drinks: [
+            "可爾必思氣泡飲（冰）",
+            "伯爵奶茶（熱）",
+            "焦糖瑪奇朵（冰）",
+          ],
+        },
+        {
+          weather: "雨天",
+          temperature: "30~40°C",
+          mood: "心情不太好",
+          drinks: ["洛神花茶（熱）", "薰衣草奶茶（熱）", "拿鐵（冰）"],
+        },
+        {
+          weather: "雨天",
+          temperature: "30~40°C",
+          mood: "心情很不好",
+          drinks: ["抹茶拿鐵（熱）", "桂花綠茶（熱）", "美式咖啡（冰）"],
+        },
+      ];
+
+      document.getElementById("mood").addEventListener("change", () => {
+        const moodKey = document.getElementById("mood").value;
+        const mood = moodMap[moodKey];
+        const moodText =
+          moodReplies[moodKey] || "請選擇心情，我們會建議您合適的飲品。";
+        document.getElementById(
+          "moodResponse"
+        ).innerHTML = `<p>${moodText}</p>`;
+        renderBox6();
+      });
+
+      let selectedDrink = "";
+
+      function renderBox6() {
+        const moodKey = document.getElementById("mood").value;
+        const mood = moodMap[moodKey];
+        const box5Text = document.getElementById("box5").innerText.trim();
+        const match = box5Text.match(/，(.+?)，(.+?°C)/);
+        const box6 = document.getElementById("box6");
+        box6.innerHTML = "";
+
+        if (!mood || !match) {
+          box6.innerText = "請選擇心情與正確的天氣格式";
+          return;
+        }
+
+        const weather = match[1];
+        const temperature = match[2];
+        const result = drinkRecommendations.find(
+          (d) =>
+            d.weather === weather &&
+            d.temperature === temperature &&
+            d.mood === mood
+        );
+
+        if (!result) {
+          box6.innerText = "找不到推薦飲品";
+          return;
+        }
+
+        result.drinks.forEach((drink) => {
+          const div = document.createElement("div");
+          div.className = "drink-box";
+          div.textContent = drink;
+          div.onclick = () => openSweetnessModal(drink);
+          box6.appendChild(div);
+        });
+      }
+
+      // 甜度選擇彈窗控制
+      const sweetnessModal = document.getElementById("sweetness-modal");
+      const sweetnessSelect = document.getElementById("sweetness");
+      const confirmBtn = document.getElementById("confirm-sweetness");
+
+      function openSweetnessModal(drink) {
+        selectedDrink = drink;
+        sweetnessModal.style.display = "block";
+      }
+
+      confirmBtn.addEventListener("click", () => {
+        const sweetness = sweetnessSelect.value;
+        addToCart(selectedDrink, sweetness);
+        sweetnessModal.style.display = "none";
+      });
+
+      ////////////////////////////////////
+
+      document.getElementById("closeBtn").onclick = function () {
+        document.getElementById("sweetness-modal").style.display = "none";
+      };
+    </script>
+  </body>
+</html>

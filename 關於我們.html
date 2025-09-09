@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Coffee</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: url('AU_coffee.jpeg') no-repeat center center/cover;
+        }
+        #home-icon {
+            position: absolute;
+            top: 20px;
+            left: 30px;
+            width: 50px;
+            height: 50px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            text-decoration: none;
+            z-index: 1000;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            transition: 0.3s;
+        }
+        #home-icon:hover {
+            background-color: #eee;
+            transform: scale(1.5);
+        }
+
+        /*////////////////////////////////////////*/
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes charFade {
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        /*////////////////////////////////////////*/
+
+        .box{
+            margin-top: -50px;
+            margin-left: -50px;
+            width: 1150px;
+            height: 600px;
+            background-color: rgba(3, 238, 255, 0.800);
+            animation: fadeIn 1s ease-in-out forwards;
+        }
+
+        h1{
+            padding: 0 25px;
+            font-size: 25px;
+            animation: fadeIn 2s ease-in-out forwards;
+        }
+
+        h2{
+            padding: 0 25px;
+            font-size: 25px;
+            animation: fadeIn 4s ease-in-out forwards;
+        }
+
+        h3{
+            padding: 0 25px;
+            font-size: 25px;
+            animation: fadeIn 6s ease-in-out forwards;
+        }
+
+        h4{
+            padding: 0 25px;
+            font-size: 25px;
+            animation: fadeIn 8s ease-in-out forwards;
+        }
+    
+        p{
+            bottom: 0;
+            color: aliceblue;
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+    <a href="主頁.html" id="home-icon" title="回首頁">🏠</a>
+    <div class="box">
+        <h1>當雲朵低垂、心情起伏，歡迎走進《雲端心情 手握咖啡》。我們不只是咖啡廳，更是一段懂你的旅程。在這裡，每一杯飲品都不只是味覺的享受，而是一種貼近你當下心情與天氣氛圍的溫柔陪伴。</h1>
+            
+        <h2>《雲端心情 手握咖啡》最大特色是我們獨家的智慧推薦系統。我們相信，一杯對的飲品，可以為你的一天注入不同的能量。透過簡單的互動，只要選擇你當下的心情狀態，我們的系統便會即時分析目前的天氣狀況與氣溫，智慧地為你推薦最適合的飲品。不論是晴朗微風的午後、陰鬱潮濕的黃昏，還是酷熱難耐的正午，我們都能為你精選出既貼心又美味的選項，讓每一口都與你當下的情緒同步共鳴。</h2>
+        
+        <h3>我們希望，來到這裡的每一位客人都能被理解，也被療癒。當你心情煩躁，我們也許會為你推薦一杯冰涼的柚子氣泡飲，清新爽口；當你感到疲憊，可能是一杯熱騰騰的榛果拿鐵，溫暖你的心房；而當你開心雀躍，我們會端上一杯繽紛的莓果優格冰沙，讓快樂更加綻放。</h3>
+        
+        <h4>《雲端心情 手握咖啡》不只是提供飲品的地方，更是讓你停下腳步、感受自我、與心靈對話的空間。我們相信，每一種天氣都有它的美，每一種心情都值得被溫柔對待。願我們的每一杯飲品，都是你生活中的一小段美好風景。</h4>
+    </div>
+
+    <script>
+    function animateText(element, delayStep = 0.2) {
+      const text = element.textContent;
+      element.innerHTML = "";
+
+      Array.from(text).forEach((char, i) => {
+        const span = document.createElement("span");
+        span.textContent = char;
+        span.classList.add("fade-char");
+        span.style.animationDelay = `${i * delayStep}s`;
+        element.appendChild(span);
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      animateText(document.querySelector("h2"));
+      animateText(document.querySelector("p"));
+    });
+  </script>
+
+    <p>&copy; 2025 Department of Information Management. All Rights Reserved.</p>
+</body>
+</html>

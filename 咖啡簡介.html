@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cloud Coffee</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      font-family: Arial, Helvetica, sans-serif;
+      align-items: center;
+      height: 100vh;
+      background: url(coffee_bean.jpg) no-repeat center center/cover;
+    }
+
+    #home-icon {
+      position: absolute;
+      top: 20px;
+      left: 30px;
+      width: 50px;
+      height: 50px;
+      background-color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      text-decoration: none;
+      z-index: 1000;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      transition: 0.3s;
+    }
+    #home-icon:hover {
+      background-color: white;
+      transform: scale(1.5);
+    }
+    
+    /*////////////////////////////////////////*/
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+
+    @keyframes charFade {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .intro {
+      width: 90%;
+      max-height: 95%;
+      overflow-y: auto;
+      background-color: rgba(0, 255, 255, 0.6);
+      padding: 20px;
+      border-radius: 10px;
+      animation: fadeIn 1s ease-in-out forwards;
+    }
+
+    .intro h1,
+    .intro p{
+      opacity: 0;
+      animation: fadeIn 1.5s ease-in-out forwards;
+    }
+
+    .intro p {
+      animation-delay: 3.5s;
+    }
+
+
+    /*////////////////////////////////////////*/
+
+    .intro h1{
+      text-align: center;
+      font-size: 30px;
+    }
+    .intro p{
+      text-align: center;
+      font-size: 20px;
+    }
+
+    .coffee-table {
+      margin-top: 20px;
+      animation: fadeIn 2.5s ease-in-out forwards;
+      animation-delay: 1s;
+      opacity: 0; /* 起始透明，動畫完成才顯示 */
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: rgba(255, 255, 255, 0.750);
+    }
+
+    th, td {
+      border: 1px solid #333;
+      padding: 10px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #7d7d7dcf;
+      color: #fff;
+    }
+
+  </style>
+</head>
+<body>
+  <a href="主頁.html" id="home-icon" title="回首頁">🏠</a>
+  <div class="intro">
+    <h1>探索咖啡豆的風味世界</h1>
+    <p>我們用心為顧客把關咖啡豆的品質，篩選優質的商家，每一杯咖啡，都有屬於它的故事與心情搭配。</p>
+
+    <div class="coffee-table">
+      <table>
+        <thead>
+          <tr>
+            <th>咖啡產地</th>
+            <th>咖啡名稱</th>
+            <th>特徵風味</th>
+            <th>適合的心情</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>衣索比亞（Ethiopia）</td>
+            <td>耶加雪菲（Yirgacheffe）</td>
+            <td>茉莉花香、柑橘、茶感、莓果酸質</td>
+            <td>靜下心來品味細緻花果香</td>
+          </tr>
+          <tr>
+            <td>肯亞（Kenya）</td>
+            <td>AA Top</td>
+            <td>黑醋栗、葡萄柚、莓果、明亮酸質</td>
+            <td>提振精神，激發思緒</td>
+          </tr>
+          <tr>
+            <td>哥倫比亞（Colombia）</td>
+            <td>Supremo</td>
+            <td>焦糖、堅果、莓果平衡感佳</td>
+            <td>溫和口感撫慰心情</td>
+          </tr>
+          <tr>
+            <td>巴拿馬（Panama）</td>
+            <td>瑰夏（Geisha）</td>
+            <td>茉莉花、蜜桃、檸檬皮、清新茶感</td>
+            <td>感受生活的美好轉機</td>
+          </tr>
+          <tr>
+            <td>瓜地馬拉（Guatemala）</td>
+            <td>安提瓜（Antigua）</td>
+            <td>可可、紅糖、柑橘、細緻果酸</td>
+            <td>濃郁甜感療癒人心</td>
+          </tr>
+          <tr>
+            <td>哥斯大黎加（Costa Rica）</td>
+            <td>塔拉珠（Tarrazú）</td>
+            <td>柑橘、熱帶水果、明亮酸質</td>
+            <td>明亮果酸帶來希望感</td>
+          </tr>
+          <tr>
+            <td>印尼 蘇門答臘（Indonesia, Sumatra）</td>
+            <td>曼特寧（Mandheling）</td>
+            <td>香料、土壤感、低酸、高醇厚感</td>
+            <td>穩重厚實，適合療癒疲憊心情</td>
+          </tr>
+          <tr>
+            <td>印度（India）</td>
+            <td>季風馬拉巴（Monsooned Malabar）</td>
+            <td>低酸、濃厚、煙燻、木質感</td>
+            <td>沉穩風味，適合沉澱心情</td>
+          </tr>
+          <tr>
+            <td>盧安達（Rwanda）</td>
+            <td>紅波旁（Red Bourbon）</td>
+            <td>水果乾、花香、甜感佳</td>
+            <td>安靜午后值得細細品味</td>
+          </tr>
+          <tr>
+            <td>尼加拉瓜（Nicaragua）</td>
+            <td>瑪拉卡圖（Maracaturra）</td>
+            <td>熱帶水果、蜂蜜、果香明亮</td>
+            <td>展現陽光氣息的選擇</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    function animateText(element, delayStep = 0.2) {
+      const text = element.textContent;
+      element.innerHTML = "";
+
+      Array.from(text).forEach((char, i) => {
+        const span = document.createElement("span");
+        span.textContent = char;
+        span.classList.add("fade-char");
+        span.style.animationDelay = `${i * delayStep}s`;
+        element.appendChild(span);
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      animateText(document.querySelector("h1"));
+      animateText(document.querySelector("p"));
+    });
+  </script>
+</body>
+</html>

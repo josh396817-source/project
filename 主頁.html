@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vujahday+Splash&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="home.html" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Cloud Coffee</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: url('cat coffee.jpg')no-repeat center center/cover;
+        }
+
+        .title {
+            margin: -300px;
+            padding: 100px;
+            font-size: 60px;
+            font-weight: bold;
+            font-style: italic;
+            font-family: Arial, Helvetica, sans-serif;
+            font-style: normal;
+            text-align: center;
+            color: rgb(0, 0, 251);
+            margin-bottom: 20px;
+            animation: fadeIn 2s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .container {
+            display: flex;
+            gap: 100px;
+        }
+        .circle {
+            width: 320px;
+            height: 320px;
+            border-radius: 50%;
+            display: flex;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out;
+            animation: fadeIn 2s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        a{
+            color: rgb(255, 255, 255);
+            text-decoration: none;
+        }
+        .circle:hover {
+            transform: scale(1.2);
+            font-size: 50px;
+        }
+        .circle1 {
+            background: rgb(170, 255, 0, 0.85);
+            transition: .6s;
+        }
+        .circle1:hover {
+            background: rgba(170, 255, 0, 0.300);
+        }
+        .circle2 {
+            background: rgb(0, 213, 255, 0.85);
+            /* font-size: px; */
+            transition: .6s;
+        }
+        .circle2:hover {
+            background: rgba(0, 213, 255, 0.300);
+        }
+        .circle3 {
+            background: rgba(217, 0, 255, 0.85);
+            transition: .6s;
+        }
+        .circle3:hover {
+            background: rgba(217, 0, 255, 0.300);
+        }
+        .circle4 {
+            background: rgb(244, 159, 2, 0.85);
+            transition: .6s;
+        }
+        .circle4:hover {
+            background: rgba(255, 255, 0, 0.300);
+        }
+        p{
+            bottom: 0;
+            color: aliceblue;
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="title">Mood in the Clouds & Coffee in Your Hands<br>雲端心情 手握咖啡</div>
+    <div class="container">
+        <a href="關於我們.html" class="circle circle1">關於我們</a>
+
+        <a href="咖啡簡介.html" class="circle circle2">我們的咖啡</a>
+ 
+        <a href="推薦頁.html" class="circle circle3">讓我幫您推薦</a>
+        
+        <a href="自己點餐(改).html" class="circle circle4">自己動手點</a>
+    </div>
+
+    <!-- ===============================================
+    =============================================== -->
+
+
+    <p>&copy; 2025 Department of Information Management. All Rights Reserved.</p>
+</body>
+</html>

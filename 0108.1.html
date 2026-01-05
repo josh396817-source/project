@@ -1,0 +1,646 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>家具商品介紹頁｜Aster 模組沙發</title>
+  <style>
+    :root{
+      --bg:#0b0f17;
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.68);
+      --border: rgba(255,255,255,.12);
+      --shadow: 0 18px 45px rgba(0,0,0,.45);
+      --radius: 18px;
+      --max: 1120px;
+
+      --accent: rgba(245,158,11,1);  /* 木質暖色 */
+      --accent2: rgba(34,197,94,1);  /* 永續綠 */
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", Segoe UI, Roboto, Helvetica, Arial;
+      color: var(--text);
+      background:
+        radial-gradient(900px 520px at 14% 16%, rgba(245,158,11,.18), transparent 55%),
+        radial-gradient(850px 520px at 86% 18%, rgba(59,130,246,.16), transparent 55%),
+        radial-gradient(950px 650px at 60% 92%, rgba(34,197,94,.14), transparent 60%),
+        var(--bg);
+      line-height:1.6;
+    }
+
+    a{ color:inherit; text-decoration:none; }
+    .container{ width:min(var(--max), calc(100% - 40px)); margin:0 auto; }
+
+    /* 導覽列 */
+    .nav{
+      position:sticky; top:0; z-index:10;
+      backdrop-filter: blur(10px);
+      background: rgba(11,15,23,.55);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 0;
+      gap:16px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px;
+      font-weight:900; letter-spacing:.2px;
+    }
+    .logo{
+      width:34px; height:34px; border-radius:12px;
+      background: linear-gradient(135deg, rgba(245,158,11,.95), rgba(59,130,246,.65));
+      box-shadow: 0 10px 25px rgba(245,158,11,.18);
+    }
+    .nav-links{
+      display:flex; align-items:center; gap:14px;
+      color: var(--muted);
+      font-weight:800;
+      font-size:14px;
+    }
+    .nav-links a{ padding:8px 10px; border-radius:10px; }
+    .nav-links a:hover{ background: rgba(255,255,255,.06); color: var(--text); }
+
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:12px 16px;
+      border-radius:14px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      font-weight:900;
+      font-size:14px;
+      gap:10px;
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+      box-shadow: 0 10px 25px rgba(0,0,0,.18);
+      cursor:pointer;
+      user-select:none;
+    }
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.18); }
+    .btn-primary{
+      border: none;
+      background: linear-gradient(135deg, rgba(245,158,11,1), rgba(59,130,246,.85));
+      box-shadow: 0 18px 35px rgba(245,158,11,.18);
+    }
+
+    /* Hero */
+    .hero{ padding:64px 0 34px; }
+    .hero-grid{
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:26px;
+      align-items:stretch;
+    }
+    .pill{
+      display:inline-flex; align-items:center; gap:10px;
+      padding:8px 12px;
+      border-radius:999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      color: var(--muted);
+      font-weight:900;
+      font-size:12px;
+      width:fit-content;
+    }
+    .dot{
+      width:10px; height:10px; border-radius:999px;
+      background: var(--accent2);
+      box-shadow: 0 0 0 6px rgba(34,197,94,.12);
+    }
+    h1{
+      margin:14px 0 10px;
+      font-size: clamp(32px, 4.2vw, 52px);
+      letter-spacing:-.9px;
+      line-height:1.1;
+    }
+    .sub{
+      margin:0 0 18px;
+      color: var(--muted);
+      font-size:16px;
+      max-width: 60ch;
+      font-weight:650;
+    }
+    .hero-actions{
+      display:flex; gap:12px; align-items:center; flex-wrap:wrap;
+      margin-top: 18px;
+    }
+    .meta{
+      display:flex; gap:16px; flex-wrap:wrap;
+      margin-top: 16px;
+      color: var(--muted);
+      font-size:13px;
+      font-weight:900;
+    }
+    .meta span{ display:inline-flex; align-items:center; gap:8px; }
+    .badge{
+      width:22px; height:22px; border-radius:8px;
+      display:inline-flex; align-items:center; justify-content:center;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      font-size:12px;
+      color: var(--text);
+    }
+
+    /* 右側商品卡 */
+    .showcase{
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+      box-shadow: var(--shadow);
+      padding:18px;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      position:relative;
+      overflow:hidden;
+      min-height: 420px;
+    }
+    .showcase::before{
+      content:"";
+      position:absolute; inset:-60px -60px auto auto;
+      width:260px; height:260px; border-radius:999px;
+      background: radial-gradient(circle at 30% 30%, rgba(245,158,11,.35), transparent 60%);
+      filter: blur(2px);
+    }
+    .showcase-top{
+      display:flex; align-items:flex-start; justify-content:space-between;
+      gap:12px;
+      position:relative;
+    }
+    .price{
+      font-weight:950;
+      font-size:18px;
+      text-align:right;
+    }
+    .rating{
+      display:inline-flex; align-items:center; gap:8px;
+      color: var(--muted);
+      font-weight:900;
+      font-size:12px;
+      border:1px solid var(--border);
+      padding:8px 10px; border-radius:999px;
+      background: rgba(255,255,255,.04);
+    }
+    .stars{ letter-spacing:1px; color: rgba(245,158,11,.95); }
+
+    .hero-image{
+      margin-top: 6px;
+      flex:1;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,.10);
+      background:
+        radial-gradient(650px 420px at 30% 18%, rgba(245,158,11,.22), transparent 55%),
+        radial-gradient(650px 420px at 70% 42%, rgba(59,130,246,.18), transparent 60%),
+        rgba(0,0,0,.25);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.04);
+      padding: 10px;
+      position:relative;
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height: 260px;
+    }
+    .product-img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      border-radius:18px;
+      transition: transform .4s ease;
+      display:block;
+    }
+    .hero-image:hover .product-img{ transform: scale(1.05); }
+
+    .chips{ display:flex; flex-wrap:wrap; gap:8px; }
+    .chip{
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      font-weight:900;
+      font-size:12px;
+    }
+
+    /* 區塊 */
+    section{ padding: 44px 0; }
+    .section-title{
+      display:flex; align-items:flex-end; justify-content:space-between;
+      gap:16px; flex-wrap:wrap;
+      margin-bottom: 16px;
+    }
+    .section-title h2{
+      margin:0;
+      font-size: 22px;
+      letter-spacing:-.2px;
+    }
+    .section-title p{
+      margin:0;
+      color: var(--muted);
+      font-weight:800;
+      max-width: 62ch;
+      font-size: 13px;
+    }
+
+    .grid-3{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:14px;
+    }
+    .card{
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.05);
+      padding: 16px;
+      box-shadow: 0 12px 28px rgba(0,0,0,.22);
+    }
+    .card h3{
+      margin:10px 0 6px;
+      font-size: 16px;
+      letter-spacing:-.2px;
+    }
+    .card p{
+      margin:0;
+      color: var(--muted);
+      font-weight:650;
+      font-size: 13px;
+    }
+    .icon{
+      width:40px; height:40px; border-radius:14px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.03));
+      display:flex; align-items:center; justify-content:center;
+      font-weight:950;
+    }
+
+    /* 規格 */
+    .details{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:14px;
+      align-items:start;
+    }
+    .list{ display:grid; gap:10px; }
+    .row{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:14px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.04);
+    }
+    .row b{ font-size:13px; }
+    .row span{ color: var(--muted); font-weight:850; font-size:13px; text-align:right; }
+
+    /* 圖庫 */
+    .gallery{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:14px;
+    }
+    .imgbox{
+      border-radius: var(--radius);
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.05);
+      box-shadow: 0 12px 28px rgba(0,0,0,.22);
+      min-height: 220px;
+      overflow:hidden;
+      position:relative;
+    }
+    .imgbox img{
+      width:100%;
+      height:100%;
+      /* object-fit: cover; */
+      border-radius:16px;
+      transition: transform .35s ease;
+      display:block;
+    }
+    .imgbox:hover img{ transform: scale(1.06); }
+    .img-main{ min-height:280px; }
+    .thumbs{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:14px;
+    }
+
+    /* 評價 */
+    .quote{ display:flex; flex-direction:column; gap:10px; }
+    .quote p{ margin:0; color: rgba(255,255,255,.86); font-weight:650; }
+    .who{
+      display:flex; align-items:center; gap:10px;
+      color: var(--muted); font-weight:900; font-size:13px;
+    }
+    .avatar{
+      width:34px; height:34px; border-radius:12px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.08);
+      display:flex; align-items:center; justify-content:center;
+      font-weight:950;
+      color: rgba(255,255,255,.86);
+    }
+
+    /* CTA */
+    .cta{
+      border-radius: calc(var(--radius) + 6px);
+      border: 1px solid rgba(255,255,255,.14);
+      background:
+        radial-gradient(900px 450px at 20% 20%, rgba(245,158,11,.20), transparent 60%),
+        radial-gradient(850px 450px at 85% 30%, rgba(59,130,246,.16), transparent 60%),
+        rgba(255,255,255,.05);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+      flex-wrap:wrap;
+    }
+    .cta h3{ margin:0; font-size:18px; }
+    .cta p{ margin:6px 0 0; color: var(--muted); font-weight:800; font-size:13px; }
+
+    footer{
+      padding: 28px 0 40px;
+      color: var(--muted);
+      border-top: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.12);
+    }
+    .foot{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:14px; flex-wrap:wrap;
+      font-weight:800;
+      font-size:13px;
+    }
+    .foot a{ color: rgba(255,255,255,.72); }
+    .foot a:hover{ color: var(--text); }
+
+    /* RWD */
+    @media (max-width: 980px){
+      .hero-grid{ grid-template-columns: 1fr; }
+      .grid-3{ grid-template-columns: 1fr; }
+      .details{ grid-template-columns: 1fr; }
+      .gallery{ grid-template-columns: 1fr; }
+      .thumbs{ grid-template-columns: 1fr; }
+      .nav-links{ display:none; }
+      .showcase{ min-height: 390px; }
+      .img-main{ min-height: 240px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="nav">
+    <div class="container nav-inner">
+      <a class="brand" href="#top" aria-label="回到頂部">
+        <span class="logo" aria-hidden="true"></span>
+        <h1>孟孟組傢俱</h1>
+      </a>
+
+      <nav class="nav-links" aria-label="主要導覽">
+        <a href="#features">舒適亮點</a>
+        <a href="#materials">材質規格</a>
+        <a href="#gallery">圖庫</a>
+        <a href="#more">更多細節</a>
+        <a href="#pricing">購買</a>
+      </nav>
+
+      <a class="btn btn-primary" href="#pricing">立即選購</a>
+    </div>
+  </div>
+
+  <main id="top">
+    <!-- 首屏 -->
+    <header class="hero">
+      <div class="container hero-grid">
+        <div>
+          <div class="pill"><span class="dot" aria-hidden="true"></span> 可選 FSC 木材 • 易清潔布料</div>
+          <h1>Aster 模組沙發｜簡約耐看，越坐越舒服</h1>
+          <p class="sub">
+            這是一個「家具商品介紹頁」範本，已幫你把圖片全部接成
+            <b>images/01.png</b> ～ <b>images/10.png</b>。
+            只要把同名圖片放進資料夾，就能直接使用。
+          </p>
+
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#pricing">加入購物車</a>
+            <a class="btn" href="#gallery">看更多照片</a>
+          </div>
+
+          <div class="meta" aria-label="重點摘要">
+            <span><span class="badge">🛋️</span> 模組可變化</span>
+            <span><span class="badge">🪵</span> 穩固骨架</span>
+            <span><span class="badge">🧼</span> 好整理</span>
+          </div>
+        </div>
+
+        <aside class="showcase" aria-label="商品預覽卡">
+          <div class="showcase-top">
+            <div>
+              <div style="font-weight:950; font-size:16px;">Aster 模組沙發</div>
+              <div style="color: var(--muted); font-weight:900; font-size:12px;">三人座 • 亞麻混紡 • 沙色</div>
+            </div>
+            <div>
+              <div class="price">NT$ 27,900</div>
+              <small class="rating"><span class="stars">★★★★★</span> 4.8（2,143）</small>
+            </div>
+          </div>
+
+          <!-- 主圖：01.png -->
+          <div class="hero-image">
+            <img src="main.jpg" alt="Aster 模組沙發主視覺" class="product-img">
+          </div>
+
+          <div class="chips" aria-label="服務與特色">
+            <span class="chip">免運到府</span>
+            <span class="chip">30 天退換</span>
+            <span class="chip">免工具組裝</span>
+            <span class="chip">寵物友善布料</span>
+          </div>
+        </aside>
+      </div>
+    </header>
+
+    <!-- 舒適亮點 -->
+    <section id="features">
+      <div class="container">
+        <div class="section-title">
+          <div>
+            <h2>舒適亮點</h2>
+            <p>建議用「體感 + 使用情境」來描述，比單純堆功能更有說服力。</p>
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div class="card">
+            <div class="icon">🫧</div>
+            <h3>蓬鬆支撐，不易塌陷</h3>
+            <p>高回彈泡棉搭配纖維包覆，久坐也能維持支撐感，適合追劇與小憩。</p>
+          </div>
+          <div class="card">
+            <div class="icon">🧩</div>
+            <h3>模組自由組合</h3>
+            <p>貴妃位可左右調換，也能拆分成多座位，適合租屋、換屋或空間改造。</p>
+          </div>
+          <div class="card">
+            <div class="icon">🧼</div>
+            <h3>易清潔可拆洗</h3>
+            <p>耐磨織紋布料搭配可拆洗設計，日常髒污更好處理，適合有孩童/寵物家庭。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 材質規格 -->
+    <section id="materials">
+      <div class="container">
+        <div class="section-title">
+          <div>
+            <h2>材質與規格</h2>
+            <p>把尺寸、材質、保固寫清楚，顧客更敢下單。</p>
+          </div>
+        </div>
+
+        <div class="details">
+          <div class="card">
+            <h3 style="margin:0 0 10px;">尺寸（可自行修改）</h3>
+            <div class="list">
+              <div class="row"><b>寬度</b><span>220 cm</span></div>
+              <div class="row"><b>深度</b><span>95 cm</span></div>
+              <div class="row"><b>座高</b><span>43 cm</span></div>
+              <div class="row"><b>貴妃深度</b><span>155 cm</span></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 style="margin:0 0 10px;">結構（可自行修改）</h3>
+            <div class="list">
+              <div class="row"><b>骨架</b><span>實木 + 夾板</span></div>
+              <div class="row"><b>面料</b><span>亞麻混紡（可拆）</span></div>
+              <div class="row"><b>坐墊</b><span>HR 泡棉 + 纖維</span></div>
+              <div class="row"><b>保固</b><span>3 年有限保固</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 圖庫：01~05 -->
+    <section id="gallery">
+      <div class="container">
+        <div class="section-title">
+          <div>
+            <h2>圖庫</h2>
+            <!-- <p>已連結 images/01.png ～ images/05.png（可直接換圖不改碼）。</p> -->
+          </div>
+        </div>
+
+        <div class="gallery">
+          <div class="imgbox img-main">
+            <img src="images01.jpg" alt="沙發情境主圖">
+          </div>
+
+          <div class="thumbs">
+            <div class="imgbox"><img src="images02.jpg" alt="側面角度"></div>
+            <div class="imgbox"><img src="images03.jpg" alt="布料細節"></div>
+            <div class="imgbox"><img src="image04.jpg" alt="木腳/五金細節"></div>
+            <div class="imgbox"><img src="images05.jpg" alt="空間比例示意"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 更多細節：06~10 -->
+    <section id="more">
+      <div class="container">
+        <div class="section-title">
+          <div>
+            <h2>更多細節</h2>
+            <!-- <p>已連結 images/06.png ～ images/10.png。</p> -->
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div class="imgbox"><img src="images06.jpg" alt="模組配置細節"></div>
+          <div class="imgbox"><img src="image07.jpg" alt="坐感舒適細節"></div>
+          <div class="imgbox"><img src="image08.jpg" alt="背靠支撐細節"></div>
+          <div class="imgbox"><img src="image09.jpg" alt="空間比例細節"></div>
+          <div class="imgbox"><img src="image10.jpg" alt="包裝/配送細節"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 評價 -->
+    <section id="reviews">
+      <div class="container">
+        <div class="section-title">
+          <div>
+            <h2>顧客評價</h2>
+            <p>短評要具體：坐感、材質、清潔、空間搭配，越真實越有說服力。</p>
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div class="card quote">
+            <p>「支撐很夠但不會硬，外型又乾淨俐落，放在客廳超加分。」</p>
+            <div class="who"><span class="avatar">S</span> Sam・台北</div>
+          </div>
+          <div class="card quote">
+            <p>「模組真的方便，搬家後重新排列也沒問題，小坪數超適合。」</p>
+            <div class="who"><span class="avatar">L</span> Lina・新居入住</div>
+          </div>
+          <div class="card quote">
+            <p>「有貓也不怕，布料好擦拭，幾個月下來還是很新。」</p>
+            <div class="who"><span class="avatar">K</span> Kai・毛孩家庭</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 購買 -->
+    <section id="pricing">
+      <div class="container">
+        <div class="section-title">
+          <div>
+            <h2>立即購買</h2>
+            <p>想要加入「顏色/尺寸」選項或「縮圖點擊切換主圖」，我也可以幫你加。</p>
+          </div>
+        </div>
+
+        <div class="cta">
+          <div>
+            <h3>Aster 模組沙發｜NT$ 27,900</h3>
+            <p>免運到府 • 30 天退換 • 免工具組裝 • 3–5 個工作天出貨</p>
+          </div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <a class="btn" href="#gallery">查看照片</a>
+            <a class="btn btn-primary" href="#">加入購物車</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container foot">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span class="logo" style="width:26px;height:26px;border-radius:10px;"></span>
+          <span>© <span id="year"></span> Atelier Home. 版權所有。</span>
+        </div>
+        <div style="display:flex; gap:14px; flex-wrap:wrap;">
+          <a href="#features">舒適亮點</a>
+          <a href="#materials">材質規格</a>
+          <a href="#gallery">圖庫</a>
+          <a href="#more">更多細節</a>
+          <a href="#pricing">購買</a>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
